@@ -132,3 +132,5 @@ dmypy.json
 # Mac system file
 model/
 .idea
+
+THUDM/

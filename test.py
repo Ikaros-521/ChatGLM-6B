@@ -1,9 +1,13 @@
 from transformers import AutoModel, AutoTokenizer
 import gradio as gr
 import mdtex2html
+import torch
 
 tokenizer = AutoTokenizer.from_pretrained("THUDM\chatglm-6b-int4", trust_remote_code=True)
-model = AutoModel.from_pretrained("THUDM\chatglm-6b-int4", trust_remote_code=True).half().cuda()
+#model = AutoModel.from_pretrained("THUDM/chatglm-6b-int4", trust_remote_code=True).half().cuda()
+model = AutoModel.from_pretrained("THUDM\chatglm-6b-int4", load_in_8bit=True, trust_remote_code=True,
+        torch_dtype=torch.float16,
+        device_map="auto",)
 model = model.eval()
 
 """Override Chatbot.postprocess"""
@@ -60,7 +64,7 @@ def predict(input, chatbot, max_length, top_p, temperature, history):
     chatbot.append((parse_text(input), ""))
     for response, history in model.stream_chat(tokenizer, input, history, max_length=max_length, top_p=top_p,
                                                temperature=temperature):
-        chatbot[-1] = (parse_text(input), parse_text(response))       
+        chatbot[-1] = (parse_text(input), parse_text(response))
 
         yield chatbot, history
 
@@ -99,3 +103,4 @@ with gr.Blocks() as demo:
     emptyBtn.click(reset_state, outputs=[chatbot, history], show_progress=True)
 
 demo.queue().launch(share=False, inbrowser=True)
+

@@ -96,6 +96,114 @@ ChatGLM-6B 开源模型旨在与开源社区一起推动大模型技术发展，
 
 此外，如果需要在 cpu 上运行量化后的模型，还需要安装 `gcc` 与 `openmp`。多数 Linux 发行版默认已安装。对于 Windows ，可在安装 [TDM-GCC](https://jmeubank.github.io/tdm-gcc/) 时勾选 `openmp`。 Windows 测试环境 `gcc` 版本为 `TDM-GCC 10.3.0`， Linux 为 `gcc 11.3.0`。在 MacOS 上请参考 [Q1](FAQ.md#q1)。
 
+#### 实例
+系统：win11  
+python：3.10.11  
+CUDA：12.1  
+
+安装  
+```
+conda install pytorch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0 pytorch-cuda=11.8 -c pytorch -c nvidia
+pip install -r requirements.txt
+```
+安装MinGW，安装gcc后，配置环境变量。  
+
+参考依赖：  
+```
+accelerate         0.20.3
+aiofiles           23.1.0
+aiohttp            3.8.4
+aiosignal          1.3.1
+altair             5.0.1
+anyio              3.7.0
+async-timeout      4.0.2
+attrs              23.1.0
+bitsandbytes       0.39.0
+certifi            2022.12.7
+charset-normalizer 2.1.1
+click              8.1.3
+colorama           0.4.6
+contourpy          1.0.7
+cpm-kernels        1.0.11
+cycler             0.11.0
+exceptiongroup     1.1.1
+fastapi            0.97.0
+ffmpy              0.3.0
+filelock           3.9.0
+fonttools          4.40.0
+frozenlist         1.3.3
+fsspec             2023.6.0
+gradio             3.34.0
+gradio_client      0.2.6
+h11                0.14.0
+httpcore           0.17.2
+httpx              0.24.1
+huggingface-hub    0.15.1
+idna               3.4
+Jinja2             3.1.2
+jsonschema         4.17.3
+kiwisolver         1.4.4
+latex2mathml       3.76.0
+linkify-it-py      2.0.2
+Markdown           3.4.3
+markdown-it-py     2.2.0
+MarkupSafe         2.1.2
+matplotlib         3.7.1
+mdit-py-plugins    0.3.3
+mdtex2html         1.2.0
+mdurl              0.1.2
+mpmath             1.2.1
+multidict          6.0.4
+networkx           3.0
+numpy              1.24.1
+orjson             3.9.1
+packaging          23.1
+pandas             2.0.2
+Pillow             9.3.0
+pip                23.1.2
+protobuf           4.23.2
+psutil             5.9.5
+pydantic           1.10.9
+pydub              0.25.1
+Pygments           2.15.1
+pyparsing          3.0.9
+pyrsistent         0.19.3
+python-dateutil    2.8.2
+python-multipart   0.0.6
+pytz               2023.3
+PyYAML             6.0
+regex              2023.6.3
+requests           2.28.1
+semantic-version   2.10.0
+sentencepiece      0.1.99
+setuptools         67.8.0
+six                1.16.0
+sniffio            1.3.0
+starlette          0.27.0
+sympy              1.11.1
+tokenizers         0.13.3
+toolz              0.12.0
+torch              2.0.1+cu118
+torchaudio         2.0.2+cu118
+torchvision        0.15.2+cu118
+tqdm               4.65.0
+transformers       4.27.1
+typing_extensions  4.4.0
+tzdata             2023.3
+uc-micro-py        1.0.2
+urllib3            1.26.13
+uvicorn            0.22.0
+websockets         11.0.3
+wheel              0.38.4
+yarl               1.9.2
+```
+
+win11下，跑web_demo，用的6b-int4的模型，修改代码如下：  
+```
+tokenizer = AutoTokenizer.from_pretrained("THUDM\chatglm-6b-int4", trust_remote_code=True)
+model = AutoModel.from_pretrained("THUDM\chatglm-6b-int4", trust_remote_code=True).half().cuda()
+```
+
 ### 代码调用 
 
 可以通过如下代码调用 ChatGLM-6B 模型来生成对话：
